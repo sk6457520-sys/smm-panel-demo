@@ -1,116 +1,189 @@
-let walletBalance = 100;
-let totalOrders = 0;
-let orders = [];
-
-// Section change
-function showSection(sectionName) {
-    const sections = document.querySelectorAll(".section");
-
-    sections.forEach(function(section) {
-        section.classList.add("hidden");
-    });
-
-    const selectedSection = document.getElementById(sectionName);
-
-    if (selectedSection) {
-        selectedSection.classList.remove("hidden");
-    }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-// Place order
-function placeOrder() {
-    const service = document.getElementById("service").value;
-    const link = document.getElementById("orderLink").value.trim();
-    const quantity = document.getElementById("quantity").value;
-    const message = document.getElementById("orderMessage");
-
-    if (service === "") {
-        message.textContent = "Please select a service.";
-        return;
-    }
-
-    if (link === "") {
-        message.textContent = "Please enter a link.";
-        return;
-    }
-
-    if (quantity === "" || Number(quantity) <= 0) {
-        message.textContent = "Please enter a valid quantity.";
-        return;
-    }
-
-    totalOrders++;
-
-    const order = {
-        id: totalOrders,
-        service: service,
-        link: link,
-        quantity: quantity,
-        status: "Pending"
-    };
-
-    orders.push(order);
-
-    document.getElementById("totalOrders").textContent = totalOrders;
-
-    message.textContent = "Order created successfully.";
-
-    document.getElementById("orderLink").value = "";
-    document.getElementById("quantity").value = "";
-
-    updateOrderHistory();
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f5f9;
+    color: #222;
+    min-height: 100vh;
 }
 
-// Add funds
-function addFunds() {
-    const amount = Number(document.getElementById("fundAmount").value);
-    const message = document.getElementById("fundMessage");
-
-    if (!amount || amount <= 0) {
-        message.textContent = "Please enter a valid amount.";
-        return;
-    }
-
-    walletBalance += amount;
-
-    document.querySelector(".balance").textContent =
-        "₹" + walletBalance.toFixed(2);
-
-    message.textContent =
-        "₹" + amount.toFixed(2) + " added successfully.";
-
-    document.getElementById("fundAmount").value = "";
+.header {
+    background: #111827;
+    color: white;
+    text-align: center;
+    padding: 25px 15px;
 }
 
-// Update order history
-function updateOrderHistory() {
-    const orderList = document.getElementById("orderList");
-
-    if (orders.length === 0) {
-        orderList.innerHTML = "<p>No orders yet.</p>";
-        return;
-    }
-
-    orderList.innerHTML = "";
-
-    orders.forEach(function(order) {
-
-        const item = document.createElement("div");
-        item.className = "order-item";
-
-        item.innerHTML = `
-            <p><strong>Order ID:</strong> ${order.id}</p>
-            <p><strong>Service:</strong> ${order.service}</p>
-            <p><strong>Quantity:</strong> ${order.quantity}</p>
-            <p><strong>Status:</strong> ${order.status}</p>
-        `;
-
-        orderList.appendChild(item);
-    });
+.header h1 {
+    font-size: 28px;
+    margin-bottom: 6px;
 }
 
-// Show dashboard when page opens
-document.addEventListener("DOMContentLoaded", function() {
-    showSection("dashboard");
-});
-    
+.header p {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.container {
+    width: 92%;
+    max-width: 600px;
+    margin: 25px auto;
+}
+
+.card {
+    background: white;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.card h2 {
+    margin-bottom: 18px;
+    font-size: 21px;
+}
+
+.wallet {
+    text-align: center;
+}
+
+.balance {
+    font-size: 32px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.menu {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.menu button {
+    border: none;
+    padding: 14px 8px;
+    border-radius: 10px;
+    background: #2563eb;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.menu button:active {
+    transform: scale(0.97);
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.stats div {
+    background: #f3f4f6;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.stats span {
+    display: block;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.stats strong {
+    font-size: 20px;
+}
+
+label {
+    display: block;
+    margin: 14px 0 7px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #d1d5db;
+    border-radius: 9px;
+    font-size: 15px;
+    outline: none;
+}
+
+input:focus,
+select:focus {
+    border-color: #2563eb;
+}
+
+.main-btn {
+    width: 100%;
+    border: none;
+    padding: 14px;
+    margin-top: 18px;
+    border-radius: 9px;
+    background: #2563eb;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.main-btn:active {
+    transform: scale(0.98);
+}
+
+.hidden {
+    display: none;
+}
+
+#orderMessage,
+#fundMessage {
+    margin-top: 12px;
+    font-weight: bold;
+}
+
+.order-item {
+    background: #f3f4f6;
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.order-item p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #777;
+    font-size: 13px;
+}
+
+@media (max-width: 450px) {
+    .header h1 {
+        font-size: 24px;
+    }
+
+    .menu {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .stats {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .balance {
+        font-size: 28px;
+    }
+    }
