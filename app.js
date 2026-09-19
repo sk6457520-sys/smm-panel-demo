@@ -1,204 +1,118 @@
-let balance = 100;
+let walletBalance = 100;
+let totalOrders = 0;
 let orders = [];
-let nextOrderId = 1001;
 
-function showPage(pageId) {
+// Section change
+function showSection(sectionName) {
+    const sections = document.querySelectorAll(".section");
 
-    document.querySelectorAll(".page").forEach(function(page) {
-        page.classList.add("hidden");
+    sections.forEach(function(section) {
+        section.classList.add("hidden");
     });
 
-    document.getElementById(pageId).classList.remove("hidden");
+    const selectedSection = document.getElementById(sectionName);
+
+    if (selectedSection) {
+        selectedSection.classList.remove("hidden");
+    }
 }
 
-
-function calculatePrice() {
-
-    const service = document.getElementById("service");
-
-    const selected = service.options[service.selectedIndex];
-
-    const rate = Number(selected.dataset.rate);
-    const unit = Number(selected.dataset.unit);
-
-    const quantity =
-        Number(document.getElementById("quantity").value) || 0;
-
-    const price = (rate * quantity) / unit;
-
-    document.getElementById("price").textContent =
-        price.toFixed(2);
-}
-
-
+// Place order
 function placeOrder() {
+    const service = document.getElementById("service").value;
+    const link = document.getElementById("orderLink").value.trim();
+    const quantity = document.getElementById("quantity").value;
+    const message = document.getElementById("orderMessage");
 
-    const serviceElement =
-        document.getElementById("service");
-
-    const selected =
-        serviceElement.options[serviceElement.selectedIndex];
-
-    const service = selected.value;
-
-    const rate = Number(selected.dataset.rate);
-    const unit = Number(selected.dataset.unit);
-
-    const link =
-        document.getElementById("link").value.trim();
-
-    const quantity =
-        Number(document.getElementById("quantity").value);
-
-    const price =
-        (rate * quantity) / unit;
-
+    if (service === "") {
+        message.textContent = "Please select a service.";
+        return;
+    }
 
     if (link === "") {
-
-        document.getElementById("orderMessage").textContent =
-            "Please enter a link.";
-
+        message.textContent = "Please enter a link.";
         return;
     }
 
-
-    if (quantity <= 0) {
-
-        document.getElementById("orderMessage").textContent =
-            "Please enter a valid quantity.";
-
+    if (quantity === "" || Number(quantity) <= 0) {
+        message.textContent = "Please enter a valid quantity.";
         return;
     }
 
-
-    if (price > balance) {
-
-        document.getElementById("orderMessage").textContent =
-            "Insufficient balance. Please add funds.";
-
-        return;
-    }
-
-
-    balance = balance - price;
-
+    totalOrders++;
 
     const order = {
-
-        id: nextOrderId,
-
+        id: totalOrders,
         service: service,
-
+        link: link,
         quantity: quantity,
-
-        amount: price,
-
         status: "Pending"
-
     };
-
-
-    nextOrderId++;
 
     orders.push(order);
 
+    document.getElementById("totalOrders").textContent = totalOrders;
 
-    updateBalance();
+    message.textContent = "Order created successfully.";
 
-    displayOrders();
+    document.getElementById("orderLink").value = "";
+    document.getElementById("quantity").value = "";
 
-
-    document.getElementById("orderMessage").textContent =
-        "Order placed successfully!";
-
-
-    document.getElementById("link").value = "";
+    updateOrderHistory();
 }
 
-
+// Add funds
 function addFunds() {
+    const amount = Number(
+        document.getElementById("fundAmount").value
+    );
 
-    const amount =
-        Number(document.getElementById("fundAmount").value);
+    const message = document.getElementById("fundMessage");
 
-
-    if (amount < 10) {
-
-        document.getElementById("fundMessage").textContent =
-            "Minimum amount is ₹10.";
-
+    if (!amount || amount <= 0) {
+        message.textContent = "Please enter a valid amount.";
         return;
     }
 
+    walletBalance += amount;
 
-    balance = balance + amount;
+    document.querySelector(".balance").textContent =
+        "₹" + walletBalance.toFixed(2);
 
+    message.textContent =
+        "₹" + amount.toFixed(2) + " added successfully.";
 
-    updateBalance();
-
-
-    document.getElementById("fundMessage").textContent =
-        "₹" + amount.toFixed(2) +
-        " demo funds added successfully.";
+    document.getElementById("fundAmount").value = "";
 }
 
-
-function updateBalance() {
-
-    document.getElementById("balance").textContent =
-        balance.toFixed(2);
-
-    document.getElementById("balance2").textContent =
-        balance.toFixed(2);
-
-    document.getElementById("totalOrders").textContent =
-        orders.length;
-}
-
-
-function displayOrders() {
-
-    const orderList =
-        document.getElementById("orderList");
-
+// Update order history
+function updateOrderHistory() {
+    const orderList = document.getElementById("orderList");
 
     if (orders.length === 0) {
-
-        orderList.innerHTML =
-            "<tr><td colspan='5'>No orders yet.</td></tr>";
-
+        orderList.innerHTML = "<p>No orders yet.</p>";
         return;
     }
-
 
     orderList.innerHTML = "";
 
-
     orders.forEach(function(order) {
+        const item = document.createElement("div");
 
-        const row = document.createElement("tr");
+        item.className = "order-item";
 
+        item.innerHTML = `
+            <p><strong>Order ID:</strong> ${order.id}</p>
+            <p><strong>Service:</strong> ${order.service}</p>
+            <p><strong>Quantity:</strong> ${order.quantity}</p>
+            <p><strong>Status:</strong> ${order.status}</p>
+        `;
 
-        row.innerHTML =
-
-            "<td>#" + order.id + "</td>" +
-
-            "<td>" + order.service + "</td>" +
-
-            "<td>" + order.quantity + "</td>" +
-
-            "<td>₹" + order.amount.toFixed(2) + "</td>" +
-
-            "<td>" + order.status + "</td>";
-
-
-        orderList.appendChild(row);
-
+        orderList.appendChild(item);
     });
 }
 
-
-calculatePrice();
-updateBalance();
-displayOrders();
+// Show dashboard when page opens
+document.addEventListener("DOMContentLoaded", function() {
+    showSection("dashboard");
+});
