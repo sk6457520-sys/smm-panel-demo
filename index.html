@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My SMM Panel</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>MY SMM PANEL</h1>
+
+    <div class="balance">
+        Wallet Balance: ₹<span id="balance">100</span>
+    </div>
+
+    <div class="menu">
+        <button onclick="showPage('dashboard')">Dashboard</button>
+        <button onclick="showPage('order')">New Order</button>
+        <button onclick="showPage('funds')">Add Funds</button>
+        <button onclick="showPage('orders')">Order History</button>
+    </div>
+
+
+    <!-- Dashboard -->
+
+    <div id="dashboard" class="page">
+
+        <h2>Dashboard</h2>
+
+        <div class="card">
+            <p>Wallet Balance</p>
+            <h2>₹<span id="balance2">100</span></h2>
+        </div>
+
+        <div class="card">
+            <p>Total Orders</p>
+            <h2 id="totalOrders">0</h2>
+        </div>
+
+        <p class="notice">
+            यह एक Demo SMM Panel है। अभी इसमें वास्तविक
+            likes, views या followers deliver नहीं किए जाते।
+        </p>
+
+    </div>
+
+
+    <!-- New Order -->
+
+    <div id="order" class="page hidden">
+
+        <h2>New Order</h2>
+
+        <label>Select Service</label>
+
+        <select id="service" onchange="calculatePrice()">
+
+            <option value="YouTube Views" data-rate="10" data-unit="1000">
+                YouTube Views - ₹10 / 1000
+            </option>
+
+            <option value="YouTube Likes" data-rate="10" data-unit="100">
+                YouTube Likes - ₹10 / 100
+            </option>
+
+            <option value="YouTube Subscribers" data-rate="50" data-unit="100">
+                YouTube Subscribers - ₹50 / 100
+            </option>
+
+            <option value="Instagram Followers" data-rate="20" data-unit="100">
+                Instagram Followers - ₹20 / 100
+            </option>
+
+            <option value="Instagram Likes" data-rate="10" data-unit="100">
+                Instagram Likes - ₹10 / 100
+            </option>
+
+            <option value="Facebook Followers" data-rate="20" data-unit="100">
+                Facebook Followers - ₹20 / 100
+            </option>
+
+        </select>
+
+
+        <label>Link</label>
+
+        <input
+            type="text"
+            id="link"
+            placeholder="https://youtube.com/..."
+        >
+
+
+        <label>Quantity</label>
+
+        <input
+            type="number"
+            id="quantity"
+            value="100"
+            min="1"
+            oninput="calculatePrice()"
+        >
+
+
+        <p>
+            Price:
+            <strong>₹<span id="price">1.00</span></strong>
+        </p>
+
+
+        <button class="primary" onclick="placeOrder()">
+            Place Order
+        </button>
+
+        <p id="orderMessage"></p>
+
+    </div>
+
+
+    <!-- Add Funds -->
+
+    <div id="funds" class="page hidden">
+
+        <h2>Add Funds</h2>
+
+        <p>Minimum Add Funds: ₹10</p>
+
+        <input
+            type="number"
+            id="fundAmount"
+            value="10"
+            min="10"
+        >
+
+        <button class="primary" onclick="addFunds()">
+            Add Demo Funds
+        </button>
+
+        <p id="fundMessage"></p>
+
+    </div>
+
+
+    <!-- Order History -->
+
+    <div id="orders" class="page hidden">
+
+        <h2>Order History</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Service</th>
+                    <th>Quantity</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody id="orderList">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<script src="app.js"></script>
+
+</body>
+</html>
